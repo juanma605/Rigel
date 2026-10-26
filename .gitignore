@@ -1,6 +1,5 @@
-.superpowers/
-.taste-skill/
-.claude/
-*.log
-.env
-.env.*
+# Solo se publica lo que esta en esta lista. Todo lo demas queda solo en tu computadora.
+*
+!.gitignore
+!index.html
+!README.md
