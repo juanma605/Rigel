@@ -501,7 +501,7 @@ footer p+p{margin-top:10px}
   </div></div>
   <div class="band"><div class="grid">
     <h3 data-reveal>¿Cómo lo recibo?</h3>
-    <p data-reveal style="--d:1">Es un PDF de descarga inmediata después del pago. Lo abrís en una ventana al lado de la mesa o en el celular.</p>
+    <p data-reveal style="--d:1">Es un PDF que te enviamos apenas confirmamos el pago. Lo abrís en una ventana al lado de la mesa o en el celular.</p>
   </div></div>
 </section>
 
@@ -522,7 +522,7 @@ footer p+p{margin-top:10px}
       </label>
       <a class="btn" id="buy" href="#comprar">Quiero el paquete completo</a>
       <p id="paynote" aria-live="polite"></p>
-      <p class="note">Descarga inmediata. Solo para mayores de 18 años.</p>
+      <p class="note">Te lo enviamos apenas confirmamos el pago. Solo para mayores de 18 años.</p>
     </div>
   </div>
   <div class="stack">
@@ -696,22 +696,30 @@ footer p+p{margin-top:10px}
   pickChip(chips[0]);
   calc();
 
-  /* compra: pegá acá los links de pago reales (Mercado Pago, etc.) */
-  var PAY = { base:'', conBonus:'' };
+  /* compra: poné acá el usuario de Instagram (sin @) para recibir los pedidos por mensaje directo */
+  var IG_USER = '';
   var buy = $('buy'), bump = $('bump');
   function money(n){ return '$'+n.toLocaleString('es-AR'); }
   function total(){
     var t = 25000 + (bump.checked ? 5000 : 0);
     $('price').textContent = money(t);
     $('totalline').textContent = bump.checked ? 'Paquete completo $25.000 + planilla $5.000' : 'Paquete completo, pago único';
-    var link = bump.checked ? PAY.conBonus : PAY.base;
-    buy.href = link || '#comprar';
-    buy.dataset.live = link ? '1' : '';
+    buy.href = IG_USER ? 'https://ig.me/m/' + IG_USER : '#comprar';
+  }
+  function pedido(){
+    return bump.checked
+      ? 'Hola! Quiero el paquete completo con la planilla de seguimiento ($30.000).'
+      : 'Hola! Quiero el paquete completo ($25.000).';
   }
   bump.addEventListener('change', total); total();
   buy.addEventListener('click', function(e){
-    if(buy.dataset.live) return;
-    e.preventDefault(); $('paynote').textContent = 'Todavía no hay un link de pago conectado.';
+    if(!IG_USER){
+      e.preventDefault(); $('paynote').textContent = 'Todavía no hay una cuenta de Instagram conectada.';
+      return;
+    }
+    var txt = pedido();
+    try { navigator.clipboard.writeText(txt); } catch(err) {}
+    $('paynote').textContent = 'Copiamos tu pedido. Pegalo en el mensaje de Instagram y te pasamos el alias para pagar.';
   });
 })();
 </script>
