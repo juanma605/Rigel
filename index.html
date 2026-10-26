@@ -147,8 +147,8 @@ svg{display:block}
 @media(max-width:820px){.sc-names{flex-direction:row}}
 
 /* ---------- calculator ---------- */
-.calc{min-height:0;overflow:clip;padding-top:clamp(56px,6vw,88px);padding-bottom:clamp(56px,6vw,88px)}
-.calc-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);row-gap:20px;align-items:start;grid-template-rows:auto 1fr}
+.calc{min-height:0;overflow:clip;padding-top:clamp(48px,4.5vw,72px);padding-bottom:clamp(48px,4.5vw,72px)}
+.calc-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);row-gap:20px;align-items:start;grid-template-rows:auto auto 1fr}
 .calc h2{grid-column:1/span 5;grid-row:1;font-size:clamp(2.75rem,6.6vw,6.25rem);align-self:start}
 .board-wrap{--w:clamp(54px,6.4vw,100px);--g:clamp(8px,1.2vw,16px);grid-column:1/span 5;grid-row:2;align-self:start;display:flex;flex-direction:column;gap:14px;margin-top:clamp(8px,2vw,28px)}
 .board{display:flex;gap:var(--g)}
@@ -160,14 +160,22 @@ svg{display:block}
 @keyframes bobu{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes bobr{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
 .hint-board{padding-left:calc(3*(var(--w) + var(--g)) + var(--w)/2 - 14px)}
-.panel{grid-column:7/span 6;grid-row:1/span 2;display:flex;flex-direction:column;gap:14px}
+.out{grid-column:1/span 5;grid-row:3;align-self:start;display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.panel{grid-column:7/span 6;grid-row:1/span 3;display:flex;flex-direction:column;gap:14px}
 .row2{display:flex;gap:12px}
 .seg{all:unset;cursor:pointer;flex:1;text-align:center;min-height:56px;display:grid;place-items:center;font:700 1.125rem/1 "Red Hat Text",sans-serif;background:rgba(26,26,26,.14);color:var(--ink);transition:background-color .25s,color .25s,transform .25s var(--ease)}
 .seg:hover{transform:translateY(-2px)}
 .seg[aria-pressed=true]{background:var(--ink);color:var(--bone)}
 .seg:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .field label{display:flex;justify-content:space-between;font-weight:700;font-size:var(--step-lead);margin-bottom:8px}
-.field .hint{margin-bottom:2px}
+.field .hint{margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{all:unset;cursor:pointer;min-height:44px;padding:0 16px;display:grid;place-items:center;font:700 1rem/1 "Red Hat Text",sans-serif;background:rgba(26,26,26,.14);color:var(--ink);transition:background-color .25s,color .25s,transform .25s var(--ease)}
+.chip:hover{transform:translateY(-2px)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bone)}
+.chip:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.why{margin:12px 0 14px;font-size:1rem;line-height:1.4;min-height:2.8em}
+.field label{font-size:1.0625rem}
 .field output{font-family:"Red Hat Display",sans-serif;font-weight:900}
 input[type=range]{width:100%;height:44px;background:transparent;accent-color:var(--ink);cursor:pointer}
 input[type=number]{width:100%;min-height:56px;padding:0 16px;border:0;border-radius:0;background:var(--bone);color:var(--ink);font:700 1.5rem/1 "Red Hat Text",sans-serif}
@@ -186,6 +194,7 @@ input[type=number]{width:100%;min-height:56px;padding:0 16px;border:0;border-rad
   .board-wrap{--g:8px;--w:calc((100vw - 2*var(--m) - 4*var(--g))/5)}
   .hint-board{font-size:.9375rem;padding-left:0;justify-content:center}
   .panel{order:3}
+  .out{order:4}
 }
 
 /* ---------- pdf preview ---------- */
@@ -384,14 +393,23 @@ footer p+p{margin-top:10px}
         <button class="seg" id="st-turn" aria-pressed="false">Falta una carta</button>
       </div>
       <div class="field">
-        <label for="outs">Tus cartas buenas <output id="outsv">9</output></label>
-        <p class="hint"><svg class="arr r" viewBox="0 0 28 28" aria-hidden="true"><use href="#a-right"/></svg><span>Arrastrá la barra: ¿cuántas cartas te sirven?</span></p>
+        <p class="hint"><svg class="arr " viewBox="0 0 28 28" aria-hidden="true"><use href="#a-down"/></svg><span>Tocá lo que te falta para ganar</span></p>
+        <div class="chips" role="group" aria-label="Qué te falta para ganar">
+          <button class="chip" aria-pressed="true" data-outs="9" data-why="Tenés 4 cartas del mismo palo: te quedan 9 cartas que te dan el color.">Color</button>
+          <button class="chip" aria-pressed="false" data-outs="8" data-why="Tenés 4 cartas seguidas y te sirven las dos puntas: 8 cartas te dan la escalera.">Escalera abierta</button>
+          <button class="chip" aria-pressed="false" data-outs="4" data-why="Te falta una carta en el medio: solo 4 cartas te dan la escalera.">Escalera por dentro</button>
+          <button class="chip" aria-pressed="false" data-outs="6" data-why="Tus dos cartas son más altas que las de la mesa: 6 cartas te dan un par ganador.">Dos cartas altas</button>
+        </div>
+        <p class="why" id="why" aria-live="polite"></p>
+        <label for="outs">O ajustalo vos: cartas buenas <output id="outsv">9</output></label>
         <input type="range" id="outs" min="1" max="20" value="9">
       </div>
       <div class="two-in">
         <div class="field"><label for="pot">Bote</label><input type="number" id="pot" value="100" min="1" inputmode="decimal"></div>
         <div class="field"><label for="bet">Apuesta</label><input type="number" id="bet" value="50" min="1" inputmode="decimal"></div>
       </div>
+    </div>
+    <div class="out">
       <div class="result">
         <div class="stat"><b id="eq">35,0%</b><span id="eqlbl">de completar con las dos cartas que faltan</span></div>
         <div class="stat"><b id="need">33,3%</b><span>que necesitás para que igualar sea rentable</span></div>
@@ -622,7 +640,20 @@ footer p+p{margin-top:10px}
   }
   $('st-flop').onclick = function(){ setStreet('flop'); };
   $('st-turn').onclick = function(){ setStreet('turn'); };
-  ['outs','pot','bet'].forEach(function(id){ $(id).addEventListener('input', calc); });
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  function pickChip(c){
+    chips.forEach(function(x){ x.setAttribute('aria-pressed', x===c); });
+    if(c){ $('outs').value = c.dataset.outs; $('why').textContent = c.dataset.why; }
+    else { $('why').textContent = 'Cartas buenas: las que quedan en el mazo y te hacen ganar si salen.'; }
+    calc();
+  }
+  chips.forEach(function(c){ c.addEventListener('click', function(){ pickChip(c); }); });
+  $('outs').addEventListener('input', function(){
+    var m = chips.filter(function(c){ return c.dataset.outs === $('outs').value; })[0];
+    pickChip(m || null);
+  });
+  ['pot','bet'].forEach(function(id){ $(id).addEventListener('input', calc); });
+  pickChip(chips[0]);
   calc();
 
   /* compra: pegá acá los links de pago reales (Mercado Pago, etc.) */
