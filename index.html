@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rigel – Tablas de poker</title>
-<meta name="description" content="PDF de tablas de probabilidades para jugar cash games online de Texas Hold'em con números, no a ojo.">
+<title>Rigel – Tablas de póker</title>
+<meta name="description" content="PDF de tablas de probabilidades para jugar Texas Hold'em de dinero real en línea con números, no a ojo.">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -212,25 +212,46 @@ input[type=number]{width:100%;min-height:56px;padding:0 16px;border:0;border-rad
 .band p{grid-column:7/span 6;max-width:52ch}
 @media(max-width:820px){.band h3,.band p{grid-column:1/-1}}
 
-/* ---------- buy ---------- */
-.buy{display:grid;grid-template-columns:5fr 7fr;min-height:90svh}
-.buy>div{position:relative;overflow:hidden;padding:clamp(28px,3.4vw,48px) var(--m);display:flex;flex-direction:column}
-.buy-a{background:var(--red);color:#0f0f0f;gap:24px}
-.buy-a h2{font-size:clamp(3rem,6vw,5.75rem)}
-.buy-a p{font-size:var(--step-lead);line-height:1.35;max-width:26ch}
-.buy-a .incl{font-size:var(--step-body);max-width:34ch;margin-top:auto}
-.buy-b{background:var(--ink);color:var(--bone);justify-content:flex-end;gap:28px}
-.price{font:900 clamp(5rem,13vw,12rem)/.85 "Red Hat Display",sans-serif;letter-spacing:-.05em}
-.price small{font:500 var(--step-lead)/1 "Red Hat Text",sans-serif;letter-spacing:0;margin-left:12px}
-.buy-b .btn{align-self:flex-start;min-height:64px;padding:0 44px;font-size:1.25rem}
-.buy-b .note{font-size:var(--step-small);max-width:52ch;color:#cfc9ba}
-#paynote{font-weight:700;color:var(--yellow);min-height:1.5em}
-.buy-b .decor{position:absolute;right:calc(var(--m) + 10px);top:clamp(28px,4vw,60px);display:flex}
+/* ---------- offer ---------- */
+.offer{background:var(--ink);color:var(--bone);padding:clamp(80px,11vw,150px) var(--m);display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);align-items:start;overflow:clip}
+.offer-left{grid-column:1/span 5;position:sticky;top:32px;display:flex;flex-direction:column;gap:clamp(24px,3vw,40px)}
+.offer h2{font-size:clamp(2.75rem,6vw,5.75rem)}
+.offer-head{display:flex;flex-direction:column;gap:20px}
+.offer-head p{font-size:var(--step-lead);line-height:1.35;max-width:26ch}
+.offer-buy{display:flex;flex-direction:column;gap:18px}
+.was{font:500 var(--step-lead)/1 "Red Hat Text",sans-serif;color:#cfc9ba}
+.was s{text-decoration-thickness:3px;text-decoration-color:var(--red)}
+.price{font:900 clamp(4.5rem,9.5vw,9rem)/.85 "Red Hat Display",sans-serif;letter-spacing:-.05em}
+.price small{font:500 var(--step-lead)/1 "Red Hat Text",sans-serif;letter-spacing:0;margin-left:10px}
+.totalline{font-size:var(--step-body);color:#cfc9ba;min-height:1.5em}
+.offer .btn{align-self:flex-start;min-height:64px;padding:0 40px;font-size:1.25rem}
+.bump{display:flex;gap:16px;align-items:flex-start;background:var(--bone);color:var(--ink);padding:20px 22px;cursor:pointer;transition:transform .25s var(--ease)}
+.bump:hover{transform:translateY(-2px)}
+.bump input{width:28px;height:28px;flex:none;margin:2px 0 0;accent-color:var(--ink);cursor:pointer}
+.bump b{font-size:var(--step-lead);line-height:1.2;display:block}
+.bump span{display:block;font-size:1rem;line-height:1.4;margin-top:6px}
+.bump:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
+#paynote{font-weight:700;color:var(--yellow);min-height:1.5em;margin:0}
+.offer .note{font-size:var(--step-small);color:#cfc9ba;max-width:44ch}
+.stack{grid-column:7/span 6;display:flex;flex-direction:column;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-items:center;padding:clamp(20px,2.4vw,30px) clamp(20px,2.6vw,32px);color:var(--ink);background:var(--c,var(--bone))}
+.item h3{font:700 clamp(1.25rem,1.9vw,1.75rem)/1.15 "Red Hat Text",sans-serif;letter-spacing:-.02em;text-transform:none}
+.item p{grid-column:1;font-size:1rem;line-height:1.4;max-width:40ch}
+.item .val{grid-column:2;grid-row:1/span 2;font:900 clamp(1.5rem,2.4vw,2.25rem)/1 "Red Hat Display",sans-serif;letter-spacing:-.03em}
+.item:nth-child(1){--c:var(--red)}.item:nth-child(2){--c:var(--yellow)}.item:nth-child(3){--c:var(--accent)}
+.item:nth-child(4){--c:var(--bone)}.item:nth-child(5){--c:var(--red)}.item:nth-child(6){--c:var(--yellow)}
+.item.sum{--c:var(--felt);color:var(--bone)}
+.item.sum .val s{text-decoration-thickness:3px;text-decoration-color:var(--red)}
+.js .item{opacity:0;transform:translateX(var(--fx,64px)) rotate(var(--fr,2.5deg));transition:opacity .7s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d,0)*90ms)}
+.js .item:nth-child(even){--fx:-64px;--fr:-2.5deg}
+.js .item.in{opacity:1;transform:none}
 @media(max-width:820px){
-  .buy{grid-template-columns:1fr}
-  .buy>div{min-height:70svh}
-  .buy-b .btn{align-self:stretch}
-  .buy-b .decor{display:none}
+  .offer{display:flex;flex-direction:column;gap:32px}
+  .offer-left{display:contents}
+  .offer-head{order:1}
+  .stack{order:2}
+  .offer-buy{order:3}
+  .offer .btn{align-self:stretch}
 }
 
 /* ---------- footer ---------- */
@@ -273,7 +294,7 @@ footer p+p{margin-top:10px}
 
   <div class="hero-row">
     <div class="hero-copy">
-      <p>Tablas de probabilidades para jugar cash games online sin adivinar: pagás, subís o foldeás con el porcentaje en la mano.</p>
+      <p>Tablas de probabilidades para jugar póker de dinero real en línea sin adivinar: igualás, subís o te retirás con el porcentaje en la mano.</p>
       <a class="btn" href="#comprar">Quiero el PDF</a>
     </div>
     <div class="fan" aria-hidden="true">
@@ -310,12 +331,12 @@ footer p+p{margin-top:10px}
   <div class="sc-list" data-reveal>
     <h2>Qué trae</h2>
     <div class="sc-names" role="tablist" aria-label="Contenido del PDF">
-      <button role="tab" aria-selected="true" data-i="0">Outs y equity</button>
-      <button role="tab" aria-selected="false" data-i="1">Pot odds</button>
+      <button role="tab" aria-selected="true" data-i="0">Cartas buenas</button>
+      <button role="tab" aria-selected="false" data-i="1">Probabilidades del bote</button>
       <button role="tab" aria-selected="false" data-i="2">Manos iniciales</button>
       <button role="tab" aria-selected="false" data-i="3">Posición</button>
     </div>
-    <p class="sc-fact" id="fact" aria-live="polite">Cuántas cartas te salvan y qué porcentaje de completar la mano significan, del flop al river.</p>
+    <p class="sc-fact" id="fact" aria-live="polite">Cuántas cartas te sirven y qué porcentaje de completar la mano significan, con una o dos cartas por venir.</p>
   </div>
   <div class="sc-stage" aria-hidden="true">
     <div class="disc" id="disc"></div>
@@ -332,20 +353,20 @@ footer p+p{margin-top:10px}
     <h2 data-reveal>Probalo<br>ahora</h2>
     <div class="panel" data-reveal style="--d:2">
       <div class="row2" role="group" aria-label="Calle">
-        <button class="seg" id="st-flop" aria-pressed="true">Estoy en el flop</button>
-        <button class="seg" id="st-turn" aria-pressed="false">Estoy en el turn</button>
+        <button class="seg" id="st-flop" aria-pressed="true">Faltan dos cartas</button>
+        <button class="seg" id="st-turn" aria-pressed="false">Falta una carta</button>
       </div>
       <div class="field">
-        <label for="outs">Tus outs <output id="outsv">9</output></label>
+        <label for="outs">Tus cartas buenas <output id="outsv">9</output></label>
         <input type="range" id="outs" min="1" max="20" value="9">
       </div>
       <div class="two-in">
-        <div class="field"><label for="pot">Pot</label><input type="number" id="pot" value="100" min="1" inputmode="decimal"></div>
+        <div class="field"><label for="pot">Bote</label><input type="number" id="pot" value="100" min="1" inputmode="decimal"></div>
         <div class="field"><label for="bet">Apuesta</label><input type="number" id="bet" value="50" min="1" inputmode="decimal"></div>
       </div>
       <div class="result">
-        <div class="stat"><b id="eq">35.0%</b><span id="eqlbl">de completar hasta el river</span></div>
-        <div class="stat"><b id="need">25.0%</b><span>que necesitás para que pagar sea rentable</span></div>
+        <div class="stat"><b id="eq">35,0%</b><span id="eqlbl">de completar con las dos cartas que faltan</span></div>
+        <div class="stat"><b id="need">33,3%</b><span>que necesitás para que igualar sea rentable</span></div>
       </div>
       <div class="verdict" id="verdict"></div>
     </div>
@@ -367,45 +388,45 @@ footer p+p{margin-top:10px}
   <div class="pages">
     <div class="pg-wrap float" data-speed=".05" data-rot="-5">
       <div class="pg cover" data-ui>
-        <span class="tag">Texas Hold'em · Cash online</span>
-        <div class="display big">Tablas<br>de poker</div>
-        <div class="redblock">Outs, pot odds y manos iniciales para decidir en segundos.</div>
+        <span class="tag">Texas Hold'em · Dinero real en línea</span>
+        <div class="display big">Tablas<br>de póker</div>
+        <div class="redblock">Cartas buenas, probabilidades del bote y manos iniciales para decidir en segundos.</div>
       </div>
     </div>
     <div class="pg-wrap float" data-speed="-.03" data-rot="0">
       <div class="pg" data-ui>
-        <h3>Outs y equity</h3>
-        <p>Chance de completar la mano según tus outs.</p>
+        <h3>Cartas buenas</h3>
+        <p>Posibilidad de completar la mano según cuántas cartas te sirven.</p>
         <table>
-          <thead><tr><th>Proyecto</th><th>Outs</th><th>Flop</th><th>Turn</th></tr></thead>
+          <thead><tr><th>Jugada</th><th>Cartas</th><th>Dos</th><th>Una</th></tr></thead>
           <tbody>
-            <tr><td>Gutshot</td><td>4</td><td class="hi">16.5%</td><td>8.7%</td></tr>
-            <tr><td>Dos overcards</td><td>6</td><td class="hi">24.1%</td><td>13.0%</td></tr>
-            <tr><td>Escalera abierta</td><td>8</td><td class="hi">31.5%</td><td>17.4%</td></tr>
-            <tr><td>Color</td><td>9</td><td class="hi">35.0%</td><td>19.6%</td></tr>
-            <tr><td>Color + gutshot</td><td>12</td><td class="hi">45.0%</td><td>26.1%</td></tr>
-            <tr><td>Color + escalera</td><td>15</td><td class="hi">54.1%</td><td>32.6%</td></tr>
+            <tr><td>Escalera por dentro</td><td>4</td><td class="hi">16,5%</td><td>8,7%</td></tr>
+            <tr><td>Dos cartas altas</td><td>6</td><td class="hi">24,1%</td><td>13,0%</td></tr>
+            <tr><td>Escalera abierta</td><td>8</td><td class="hi">31,5%</td><td>17,4%</td></tr>
+            <tr><td>Color</td><td>9</td><td class="hi">35,0%</td><td>19,6%</td></tr>
+            <tr><td>Color + esc. por dentro</td><td>12</td><td class="hi">45,0%</td><td>26,1%</td></tr>
+            <tr><td>Color + esc. abierta</td><td>15</td><td class="hi">54,1%</td><td>32,6%</td></tr>
           </tbody>
         </table>
-        <p class="foot">Flop: dos cartas por venir. Turn: una.</p>
+        <p class="foot">Dos: faltan dos cartas. Una: falta una.</p>
       </div>
     </div>
     <div class="pg-wrap float" data-speed=".05" data-rot="5">
       <div class="pg" data-ui>
-        <h3>Pot odds</h3>
-        <p>Equity mínima para pagar según la apuesta.</p>
+        <h3>Probabilidades del bote</h3>
+        <p>Mínimo necesario para igualar según la apuesta.</p>
         <table>
           <thead><tr><th>Apuesta</th><th>Necesitás</th></tr></thead>
           <tbody>
-            <tr><td>1/4 del pot</td><td class="hi">20.0%</td></tr>
-            <tr><td>1/3 del pot</td><td class="hi">25.0%</td></tr>
-            <tr><td>1/2 del pot</td><td class="hi">33.3%</td></tr>
-            <tr><td>2/3 del pot</td><td class="hi">40.0%</td></tr>
-            <tr><td>3/4 del pot</td><td class="hi">42.9%</td></tr>
-            <tr><td>Pot</td><td class="hi">50.0%</td></tr>
+            <tr><td>1/4 del bote</td><td class="hi">20,0%</td></tr>
+            <tr><td>1/3 del bote</td><td class="hi">25,0%</td></tr>
+            <tr><td>1/2 del bote</td><td class="hi">33,3%</td></tr>
+            <tr><td>2/3 del bote</td><td class="hi">40,0%</td></tr>
+            <tr><td>3/4 del bote</td><td class="hi">42,9%</td></tr>
+            <tr><td>El bote</td><td class="hi">50,0%</td></tr>
           </tbody>
         </table>
-        <p class="foot">Si tu chance supera el porcentaje, pagar es rentable.</p>
+        <p class="foot">Si tu porcentaje supera el porcentaje, igualar es rentable.</p>
       </div>
     </div>
   </div>
@@ -416,11 +437,11 @@ footer p+p{margin-top:10px}
   <div class="faq-head"><h2 data-reveal>Preguntas</h2></div>
   <div class="band"><div class="grid">
     <h3 data-reveal>¿Para qué tipo de juego sirve?</h3>
-    <p data-reveal style="--d:1">Para Texas Hold'em en cash games online. Las tablas de outs y pot odds sirven en cualquier mesa; las de manos iniciales y posición están pensadas para ese formato.</p>
+    <p data-reveal style="--d:1">Para Texas Hold'em de dinero real en línea. Las tablas de cartas buenas y probabilidades del bote sirven en cualquier mesa; las de manos iniciales y posición están pensadas para ese formato.</p>
   </div></div>
   <div class="band"><div class="grid">
     <h3 data-reveal>¿Me garantiza ganar plata?</h3>
-    <p data-reveal style="--d:1">No. Te ayuda a decidir mejor, y a largo plazo eso se nota en los resultados. En el corto plazo la varianza y el rake pueden jugar en contra, y ninguna tabla lo cambia.</p>
+    <p data-reveal style="--d:1">No. Te ayuda a decidir mejor, y a largo plazo eso se nota en los resultados. En el corto plazo la mala racha y la comisión de la sala pueden jugar en contra, y ninguna tabla lo cambia.</p>
   </div></div>
   <div class="band"><div class="grid">
     <h3 data-reveal>¿Sirve si no soy profesional?</h3>
@@ -432,30 +453,42 @@ footer p+p{margin-top:10px}
   </div></div>
 </section>
 
-<!-- ============ COMPRAR ============ -->
-<section class="buy" id="comprar">
-  <div class="buy-a">
-    <h2 data-reveal>El PDF</h2>
-    <p data-reveal style="--d:1">Para decidir con el porcentaje en la mano.</p>
-    <p class="incl" data-reveal style="--d:2">Incluye tablas de outs y equity, pot odds, manos iniciales y rangos por posición, en un formato pensado para consultar mientras jugás.</p>
-  </div>
-  <div class="buy-b">
-    <div class="decor float" data-speed=".05" aria-hidden="true">
-      <div class="pcard" data-card="A s" style="--w:clamp(90px,9vw,130px);transform:rotate(-10deg)"></div>
-      <div class="pcard" data-card="A h" style="--w:clamp(90px,9vw,130px);transform:rotate(8deg);margin-left:-30px"></div>
+<!-- ============ OFERTA ============ -->
+<section class="offer" id="comprar">
+  <div class="offer-left">
+    <div class="offer-head">
+      <h2 data-reveal>Todo junto,<br>un solo pago</h2>
+      <p data-reveal style="--d:1">Seis herramientas que se arman en una sola compra, para decidir con el porcentaje en la mano.</p>
     </div>
-    <div class="price" data-reveal>USD 9<small>pago único</small></div>
-    <a class="btn" id="buy" href="#comprar" data-reveal style="--d:1">Comprar ahora</a>
-    <p id="paynote" aria-live="polite"></p>
-    <p class="note" data-reveal style="--d:2">Descarga inmediata. Solo para mayores de 18 años.</p>
+    <div class="offer-buy">
+      <div class="was" data-reveal>Por separado: <s>$45.000</s></div>
+      <div class="price" data-reveal id="price">$25.000</div>
+      <div class="totalline" id="totalline" aria-live="polite">Paquete completo, pago único</div>
+      <label class="bump">
+        <input type="checkbox" id="bump">
+        <div><b>Sumá la planilla de seguimiento por $5.000 más</b><span>Anotá tus sesiones y descubrí qué manos te hacen ganar y cuáles perder.</span></div>
+      </label>
+      <a class="btn" id="buy" href="#comprar">Quiero el paquete completo</a>
+      <p id="paynote" aria-live="polite"></p>
+      <p class="note">Descarga inmediata. Solo para mayores de 18 años.</p>
+    </div>
+  </div>
+  <div class="stack">
+    <div class="item" style="--d:0"><div><h3>La guía completa</h3><p>Cartas buenas, posibilidades de ganar y probabilidades del bote, de la A a la Z.</p></div><div class="val">$12.000</div></div>
+    <div class="item" style="--d:1"><div><h3>Manos iniciales</h3><p>Cómo rinde cada mano de salida y cuándo conviene entrar.</p></div><div class="val">$8.000</div></div>
+    <div class="item" style="--d:2"><div><h3>Rangos por posición</h3><p>Qué manos abrir desde cada asiento de la mesa.</p></div><div class="val">$8.000</div></div>
+    <div class="item" style="--d:3"><div><h3>Hoja de consulta rápida</h3><p>Una página para imprimir o tener abierta al lado de la mesa.</p></div><div class="val">$5.000</div></div>
+    <div class="item" style="--d:4"><div><h3>Ejercicios de decisión</h3><p>Situaciones reales para practicar, con la respuesta al final.</p></div><div class="val">$6.000</div></div>
+    <div class="item" style="--d:5"><div><h3>Guía para cuidar tu plata</h3><p>Cuánto llevar a cada mesa y cuándo pararte.</p></div><div class="val">$6.000</div></div>
+    <div class="item sum" style="--d:6"><div><h3>Todo junto, hoy</h3><p>Pago único, sin suscripción.</p></div><div class="val"><s>$45.000</s> $25.000</div></div>
   </div>
 </section>
 </main>
 
 <footer>
   <div class="word" aria-hidden="true">Rigel</div>
-  <p>Este material es educativo. Mejora la toma de decisiones, pero no garantiza ganancias: el poker implica riesgo de perder dinero. Jugá con responsabilidad y solo con plata que puedas perder.</p>
-  <p>Las tablas de probabilidades asumen un mazo de 52 cartas y no incluyen implied odds ni fold equity.</p>
+  <p>Este material es educativo. Mejora la toma de decisiones, pero no garantiza ganancias: el póker implica riesgo de perder dinero. Jugá con responsabilidad y solo con plata que puedas perder.</p>
+  <p>Las tablas de probabilidades asumen un mazo de 52 cartas y no incluyen ganancias futuras ni la posibilidad de que el rival se retire.</p>
 </footer>
 
 <script>
@@ -486,7 +519,7 @@ footer p+p{margin-top:10px}
   var io = new IntersectionObserver(function(es){
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, {threshold:.15});
-  document.querySelectorAll('[data-reveal]').forEach(function(el){ io.observe(el); });
+  document.querySelectorAll('[data-reveal],.item').forEach(function(el){ io.observe(el); });
 
   /* parallax floats */
   var floats = [].slice.call(document.querySelectorAll('.float[data-speed]'));
@@ -522,9 +555,9 @@ footer p+p{margin-top:10px}
 
   /* showcase tabs */
   var facts = [
-    'Cuántas cartas te salvan y qué porcentaje de completar la mano significan, del flop al river.',
-    'Qué porcentaje necesitás para que pagar sea rentable, según el tamaño de la apuesta.',
-    'Cómo rinde cada mano de salida y cuándo conviene entrar al pot.',
+    'Cuántas cartas te sirven y qué porcentaje de completar la mano significan, con una o dos cartas por venir.',
+    'Qué porcentaje necesitás para que igualar sea rentable, según el tamaño de la apuesta.',
+    'Cómo rinde cada mano de salida y cuándo conviene entrar a la mano.',
     'Qué manos abrir desde cada asiento de la mesa: temprano, medio, botón y ciegas.'
   ];
   var colors = ['var(--red)','var(--yellow)','var(--accent)','var(--ink)'];
@@ -546,6 +579,7 @@ footer p+p{margin-top:10px}
 
   /* calculator (exact hypergeometric, 52-card deck) */
   function C2(n){ return n*(n-1)/2; }
+  function pc(x){ return (x*100).toFixed(1).replace('.',','); }
   var street = 'flop';
   var $ = function(id){ return document.getElementById(id); };
   function calc(){
@@ -553,13 +587,13 @@ footer p+p{margin-top:10px}
     $('outsv').textContent = outs;
     var eq = street==='flop' ? 1 - C2(47-outs)/C2(47) : outs/46;
     var need = (pot+bet) > 0 ? bet/(pot+bet) : 0;
-    $('eq').textContent = (eq*100).toFixed(1)+'%';
-    $('need').textContent = (need*100).toFixed(1)+'%';
-    $('eqlbl').textContent = street==='flop' ? 'de completar hasta el river' : 'de completar en el river';
+    $('eq').textContent = pc(eq)+'%';
+    $('need').textContent = pc(need)+'%';
+    $('eqlbl').textContent = street==='flop' ? 'de completar con las dos cartas que faltan' : 'de completar con la carta que falta';
     var ok = eq >= need, v = $('verdict');
-    v.innerHTML = (ok ? 'Pagar es rentable: tenés '+(eq*100).toFixed(1)+'% y necesitás '+(need*100).toFixed(1)+'%.'
-                      : 'Con estos números, foldear: tenés '+(eq*100).toFixed(1)+'% y necesitás '+(need*100).toFixed(1)+'%.')
-      + '<small>Cálculo puro de equity contra pot odds. No incluye implied odds ni la chance de que el rival foldee.</small>';
+    v.innerHTML = (ok ? 'Conviene igualar: tenés '+pc(eq)+'% y necesitás '+pc(need)+'%.'
+                      : 'Con estos números, mejor retirarte: tenés '+pc(eq)+'% y necesitás '+pc(need)+'%.')
+      + '<small>Compara tu chance de completar la mano con lo que necesitás según la apuesta. No incluye ganancias futuras ni la posibilidad de que el rival se retire.</small>';
   }
   function setStreet(s){
     street = s;
@@ -572,11 +606,23 @@ footer p+p{margin-top:10px}
   ['outs','pot','bet'].forEach(function(id){ $(id).addEventListener('input', calc); });
   calc();
 
-  /* purchase: wire a real payment link here (Mercado Pago, Gumroad, etc.) */
-  var PAY_URL = '';
-  var buy = $('buy');
-  if(PAY_URL){ buy.href = PAY_URL; }
-  else buy.addEventListener('click', function(e){ e.preventDefault(); $('paynote').textContent = 'Todavía no hay un link de pago conectado.'; });
+  /* compra: pegá acá los links de pago reales (Mercado Pago, etc.) */
+  var PAY = { base:'', conBonus:'' };
+  var buy = $('buy'), bump = $('bump');
+  function money(n){ return '$'+n.toLocaleString('es-AR'); }
+  function total(){
+    var t = 25000 + (bump.checked ? 5000 : 0);
+    $('price').textContent = money(t);
+    $('totalline').textContent = bump.checked ? 'Paquete completo $25.000 + planilla $5.000' : 'Paquete completo, pago único';
+    var link = bump.checked ? PAY.conBonus : PAY.base;
+    buy.href = link || '#comprar';
+    buy.dataset.live = link ? '1' : '';
+  }
+  bump.addEventListener('change', total); total();
+  buy.addEventListener('click', function(e){
+    if(buy.dataset.live) return;
+    e.preventDefault(); $('paynote').textContent = 'Todavía no hay un link de pago conectado.';
+  });
 })();
 </script>
 </body>
