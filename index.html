@@ -150,8 +150,11 @@ svg{display:block}
 .calc{min-height:0;overflow:clip;padding-top:clamp(48px,4.5vw,72px);padding-bottom:clamp(48px,4.5vw,72px)}
 .calc-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);row-gap:20px;align-items:start;grid-template-rows:auto auto 1fr}
 .calc h2{grid-column:1/span 5;grid-row:1;font-size:clamp(2.75rem,6.6vw,6.25rem);align-self:start}
-.board-wrap{--w:clamp(54px,6.4vw,100px);--g:clamp(8px,1.2vw,16px);grid-column:1/span 5;grid-row:2;align-self:start;display:flex;flex-direction:column;gap:14px;margin-top:clamp(8px,2vw,28px)}
-.board{display:flex;gap:var(--g)}
+.board-wrap{--w:clamp(38px,4.3vw,70px);--g:clamp(6px,.8vw,12px);--gg:clamp(16px,2.2vw,32px);grid-column:1/span 5;grid-row:2;align-self:start;display:flex;flex-direction:column;gap:14px;margin-top:clamp(8px,2vw,28px)}
+.board{display:flex;gap:var(--gg);align-items:flex-end}
+.grp{display:flex;flex-direction:column;gap:8px}
+.grp .lbl{font:700 1rem/1 "Red Hat Text",sans-serif}
+.cards{display:flex;gap:var(--g)}
 .hint{display:flex;align-items:center;gap:12px;margin:0;font:700 1.0625rem/1.2 "Red Hat Text",sans-serif}
 .hint .arr{width:28px;height:28px;flex:none;animation:bob 1.4s ease-in-out infinite}
 .hint .arr.u{animation-name:bobu}
@@ -159,7 +162,8 @@ svg{display:block}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @keyframes bobu{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes bobr{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
-.hint-board{padding-left:calc(3*(var(--w) + var(--g)) + var(--w)/2 - 14px)}
+.hint-board span{white-space:nowrap}
+.hint-board{padding-left:calc(2*var(--w) + var(--g) + var(--gg) + 3*(var(--w) + var(--g)) + var(--w)/2 - 14px)}
 .out{grid-column:1/span 5;grid-row:3;align-self:start;display:flex;flex-direction:column;gap:12px;margin-top:8px}
 .panel{grid-column:7/span 6;grid-row:1/span 3;display:flex;flex-direction:column;gap:14px}
 .row2{display:flex;gap:12px}
@@ -191,7 +195,8 @@ input[type=number]{width:100%;min-height:56px;padding:0 16px;border:0;border-rad
   .calc-grid{display:flex;flex-direction:column;gap:16px}
   .calc h2{order:1;font-size:2.75rem}
   .board-wrap{order:2;position:sticky;top:0;z-index:4;background:var(--accent);margin:0 calc(var(--m)*-1);padding:10px var(--m) 12px;gap:10px}
-  .board-wrap{--g:8px;--w:calc((100vw - 2*var(--m) - 4*var(--g))/5)}
+  .board-wrap{--g:5px;--gg:14px;--w:calc((100vw - 2*var(--m) - 5*var(--g) - var(--gg))/7)}
+  .grp .lbl{font-size:.875rem}
   .hint-board{font-size:.9375rem;padding-left:0;justify-content:center}
   .panel{order:3}
   .out{order:4}
@@ -378,11 +383,21 @@ footer p+p{margin-top:10px}
     <h2 data-reveal>Probalo<br>ahora</h2>
     <div class="board-wrap">
       <div class="board" aria-hidden="true">
-        <div class="flip up" data-card="A h" data-face></div>
-        <div class="flip up" data-card="7 s" data-face></div>
-        <div class="flip up" data-card="2 d" data-face></div>
-        <div class="flip" id="turnc" data-card="9 c" data-face></div>
-        <div class="flip" id="riverc" data-card="4 h" data-face></div>
+        <div class="grp"><span class="lbl">Tu mano</span>
+          <div class="cards">
+            <div class="flip up" id="h0" data-card="A h" data-face></div>
+            <div class="flip up" id="h1" data-card="K h" data-face></div>
+          </div>
+        </div>
+        <div class="grp"><span class="lbl">La mesa</span>
+          <div class="cards">
+            <div class="flip up" id="t0" data-card="7 h" data-face></div>
+            <div class="flip up" id="t1" data-card="2 h" data-face></div>
+            <div class="flip up" id="t2" data-card="J c" data-face></div>
+            <div class="flip" id="turnc" data-card="4 s" data-face></div>
+            <div class="flip" id="riverc" data-card="9 d" data-face></div>
+          </div>
+        </div>
       </div>
       <p class="hint hint-board"><svg class="arr u" viewBox="0 0 28 28" aria-hidden="true"><use href="#a-up"/></svg><span>Se da vuelta si falta una carta</span></p>
     </div>
@@ -395,10 +410,10 @@ footer p+p{margin-top:10px}
       <div class="field">
         <p class="hint"><svg class="arr " viewBox="0 0 28 28" aria-hidden="true"><use href="#a-down"/></svg><span>Tocá lo que te falta para ganar</span></p>
         <div class="chips" role="group" aria-label="Qué te falta para ganar">
-          <button class="chip" aria-pressed="true" data-outs="9" data-why="Tenés 4 cartas del mismo palo: te quedan 9 cartas que te dan el color.">Color</button>
-          <button class="chip" aria-pressed="false" data-outs="8" data-why="Tenés 4 cartas seguidas y te sirven las dos puntas: 8 cartas te dan la escalera.">Escalera abierta</button>
-          <button class="chip" aria-pressed="false" data-outs="4" data-why="Te falta una carta en el medio: solo 4 cartas te dan la escalera.">Escalera por dentro</button>
-          <button class="chip" aria-pressed="false" data-outs="6" data-why="Tus dos cartas son más altas que las de la mesa: 6 cartas te dan un par ganador.">Dos cartas altas</button>
+          <button class="chip" aria-pressed="true" data-hand="A h,K h" data-flop="7 h,2 h,J c" data-turn="4 s" data-outs="9" data-why="Tenés 4 cartas del mismo palo: te quedan 9 cartas que te dan el color.">Color</button>
+          <button class="chip" aria-pressed="false" data-hand="8 c,7 d" data-flop="6 s,5 h,K d" data-turn="2 c" data-outs="8" data-why="Tenés 4 cartas seguidas y te sirven las dos puntas: 8 cartas te dan la escalera.">Escalera abierta</button>
+          <button class="chip" aria-pressed="false" data-hand="J s,10 d" data-flop="8 h,7 c,2 s" data-turn="3 d" data-outs="4" data-why="Te falta una carta en el medio: solo 4 cartas te dan la escalera.">Escalera por dentro</button>
+          <button class="chip" aria-pressed="false" data-hand="A s,K d" data-flop="9 c,6 h,3 d" data-turn="4 s" data-outs="6" data-why="Tus dos cartas son más altas que las de la mesa: 6 cartas te dan un par ganador.">Dos cartas altas</button>
         </div>
         <p class="why" id="why" aria-live="polite"></p>
         <label for="outs">O ajustalo vos: cartas buenas <output id="outsv">9</output></label>
@@ -640,10 +655,28 @@ footer p+p{margin-top:10px}
   }
   $('st-flop').onclick = function(){ setStreet('flop'); };
   $('st-turn').onclick = function(){ setStreet('turn'); };
-  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  var chips = [].slice.call(document.querySelectorAll('.chip')), lastChip = null;
+  var SUITK = {h:1,d:1,s:0,c:0};
+  function setFace(el, code){
+    var p = code.trim().split(' '), face = el.querySelector('.face');
+    face.classList.toggle('r', !!SUITK[p[1]]);
+    face.innerHTML = cardHTML(p[0], p[1]);
+  }
+  var ids = ['h0','h1','t0','t1','t2','turnc'];
+  function dealCards(c, first){
+    var codes = c.dataset.hand.split(',').concat(c.dataset.flop.split(','), [c.dataset.turn]);
+    function apply(){
+      ids.forEach(function(id,i){ setFace($(id), codes[i]); });
+      ['h0','h1','t0','t1','t2'].forEach(function(id){ $(id).classList.add('up'); });
+      $('turnc').classList.toggle('up', street==='turn');
+    }
+    if(first || reduce){ apply(); return; }
+    ids.forEach(function(id){ $(id).classList.remove('up'); });
+    setTimeout(apply, 500);
+  }
   function pickChip(c){
     chips.forEach(function(x){ x.setAttribute('aria-pressed', x===c); });
-    if(c){ $('outs').value = c.dataset.outs; $('why').textContent = c.dataset.why; }
+    if(c){ $('outs').value = c.dataset.outs; $('why').textContent = c.dataset.why; if(c!==lastChip){ dealCards(c, !lastChip); lastChip = c; } }
     else { $('why').textContent = 'Cartas buenas: las que quedan en el mazo y te hacen ganar si salen.'; }
     calc();
   }
