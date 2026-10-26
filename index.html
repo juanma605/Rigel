@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rigel – Tablas de poker</title>
+<meta name="description" content="PDF de tablas de probabilidades para jugar cash games online de Texas Hold'em con números, no a ojo.">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ebe5d5; --surface:#ddd5c2; --ink:#161616; --muted:#4f4b43; --accent:#1fae5b; --felt:#0b3d2a;
+  --red:#e2483d; --yellow:#f0b92b; --bone:#ebe5d5; --card:#f4efe3; --suit-red:#c8312b;
+  --m:clamp(20px,3vw,40px);
+  --step-small:clamp(.8125rem,.79rem + .1vw,.875rem);
+  --step-body:clamp(1.0625rem,1rem + .25vw,1.1875rem);
+  --step-lead:clamp(1.25rem,1.1rem + .7vw,1.625rem);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--step-body)/1.5 "Red Hat Text",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.display{font-family:"Red Hat Display","Red Hat Text",system-ui,sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:-.03em;line-height:.92;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+::selection{background:var(--accent);color:var(--ink)}
+svg{display:block}
+
+/* ---------- fields ---------- */
+.chapter{position:relative;overflow:hidden;padding:clamp(80px,11vw,150px) var(--m)}
+.f-ink{background:var(--ink);color:var(--bone)}
+.f-bone{background:var(--bg)}
+.f-green{background:var(--accent);color:var(--ink)}
+.f-felt{background:var(--felt);color:var(--bone)}
+.f-yellow{background:var(--yellow)}
+.f-red{background:var(--red);color:#0f0f0f}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 32px;background:var(--accent);color:var(--ink);font:700 1.0625rem/1 "Red Hat Text",sans-serif;text-decoration:none;border:0;border-radius:0;cursor:pointer;transition:transform .25s var(--ease),background-color .2s}
+.btn:hover{transform:translateY(-3px);background:#34c46d}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn.dark{background:var(--ink);color:var(--bone)}
+.btn.dark:hover{background:#000}
+.btn.small{min-height:44px;padding:0 20px;font-size:1rem}
+
+/* ---------- header ---------- */
+.bar{position:absolute;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px var(--m)}
+.mark{font:900 1.375rem/1 "Red Hat Display",sans-serif;letter-spacing:-.03em;text-transform:uppercase;text-decoration:none}
+.bar nav{display:flex;align-items:center;gap:clamp(14px,2.4vw,34px)}
+.bar nav a:not(.btn){text-decoration:none;font-weight:500;transition:color .2s}
+.bar nav a:not(.btn):hover{color:var(--accent)}
+@media(max-width:720px){.bar nav a:not(.btn){display:none}}
+
+/* ---------- playing cards ---------- */
+.pcard{position:relative;width:var(--w,120px);aspect-ratio:5/7;background:var(--card);color:var(--ink);border-radius:8px;flex:none}
+.pcard.r{color:var(--suit-red)}
+.pcard .c{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;font:900 calc(var(--w,120px)*.2)/1 "Red Hat Display",sans-serif;letter-spacing:-.02em}
+.pcard .c svg{width:calc(var(--w,120px)*.16);height:calc(var(--w,120px)*.16);fill:currentColor}
+.pcard .tl{top:7%;left:8%}
+.pcard .br{bottom:7%;right:8%;transform:rotate(180deg)}
+.pcard .pip{position:absolute;inset:0;margin:auto;width:46%;height:auto;aspect-ratio:1;fill:currentColor}
+.pcard.back{background:var(--card)}
+.pcard.back::after{content:"";position:absolute;inset:9%;background:var(--ink);border-radius:4px}
+.flip{perspective:900px;width:var(--w,120px);aspect-ratio:5/7}
+.flip .in3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+.flip.up .in3d{transform:rotateY(180deg)}
+.flip .pcard{position:absolute;inset:0;width:100%;backface-visibility:hidden}
+.flip .face{transform:rotateY(180deg)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:120px;padding-bottom:clamp(40px,6vw,80px)}
+.hero h1{font-size:clamp(3rem,11.2vw,10.5rem);line-height:.9;max-width:none}
+.line{display:block;overflow:hidden;padding:.14em 0 .06em;margin-top:-.14em}
+.line>span{display:block;animation:rise 1s var(--ease) both}
+.line:nth-child(2)>span{animation-delay:.11s}
+@keyframes rise{from{transform:translateY(112%)}to{transform:none}}
+.hero-row{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);align-items:end;margin-top:clamp(28px,4vw,56px)}
+.hero-copy{grid-column:1/span 5;display:flex;flex-direction:column;gap:28px;align-items:flex-start;animation:fadeup .9s .5s var(--ease) both}
+.hero-copy p{font-size:var(--step-lead);line-height:1.35;max-width:28ch}
+@keyframes fadeup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.fan{grid-column:7/span 6;position:relative;height:clamp(220px,28vw,380px)}
+.fan .float{position:absolute;left:50%;bottom:0;width:0;height:0}
+.fan .pcard{position:absolute;left:0;bottom:0;--w:clamp(84px,10vw,150px);transform-origin:50% 120%;margin-left:calc(var(--w)/-2);animation:deal 1.1s var(--ease) both;animation-delay:calc(.35s + var(--i)*.09s)}
+@keyframes deal{from{opacity:0;transform:translate(calc(var(--x)*-1 - 40vw),60%) rotate(-40deg)}to{opacity:1;transform:translate(var(--x),0) rotate(var(--r))}}
+.hero .pcard.in{transform:translate(var(--x),0) rotate(var(--r))}
+@media(max-width:820px){
+  .hero-row{display:flex;flex-direction:column;align-items:flex-start;gap:36px}
+  .hero-copy{order:2}
+  .fan{order:1;width:100%;height:230px}
+}
+
+/* ---------- reveal ---------- */
+.js [data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:calc(var(--d,0)*80ms)}
+.js [data-reveal].in{opacity:1;transform:none}
+
+
+/* ---------- deal scene (scroll-driven card) ---------- */
+.deal{height:320svh;position:relative;background:var(--felt);color:var(--bone)}
+.deal-stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);align-items:center;padding:0 var(--m);perspective:1400px}
+.deal-copy{grid-column:1/span 5;display:flex;flex-direction:column;gap:24px}
+.deal-copy h2{font-size:clamp(2.75rem,6.4vw,6.5rem)}
+.deal-copy p{font-size:var(--step-lead);line-height:1.35;max-width:26ch}
+.deal-card{grid-column:7/span 6;display:grid;place-items:center;height:100svh}
+.spin{position:relative;height:min(64svh,78vw*1.4);aspect-ratio:5/7;transform-style:preserve-3d;will-change:transform}
+.spin .pcard{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;border-radius:clamp(10px,1.6vw,22px)}
+.spin .pcard .c{font-size:calc(min(64svh,78vw*1.4)*.1)}
+.spin .pcard .c svg{width:calc(min(64svh,78vw*1.4)*.08);height:calc(min(64svh,78vw*1.4)*.08)}
+.spin .back{transform:rotateY(180deg)}
+@media(max-width:820px){
+  .deal-stage{grid-template-rows:auto 1fr;align-items:start;padding-top:84px}
+  .deal-copy{grid-column:1/-1}
+  .deal-copy p{display:none}
+  .deal-card{grid-column:1/-1;height:auto;align-self:stretch}
+  .spin{height:min(50svh,62vw*1.4)}
+}
+@media(prefers-reduced-motion:reduce){.deal{height:auto}.deal-stage{position:static;min-height:100svh}}
+
+/* ---------- showcase ---------- */
+.showcase{min-height:100svh;display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);align-items:center}
+.sc-list{grid-column:1/span 6;display:flex;flex-direction:column;gap:clamp(6px,1vw,14px)}
+.sc-list h2{font-size:clamp(2.5rem,7vw,6.5rem);margin-bottom:clamp(16px,2.5vw,36px)}
+.sc-list button{all:unset;cursor:pointer;font:700 clamp(1.75rem,2.9vw,2.75rem)/1.15 "Red Hat Text",sans-serif;letter-spacing:-.02em;color:var(--muted);transition:color .25s,transform .35s var(--ease);width:fit-content}
+.sc-list button:hover{transform:translateX(8px)}
+.sc-list button[aria-selected=true]{color:var(--ink)}
+.sc-list button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.sc-fact{margin-top:clamp(16px,2vw,28px);max-width:34ch;min-height:4.5em;font-size:var(--step-body);transition:opacity .3s}
+.sc-stage{grid-column:7/span 6;position:relative;display:grid;place-items:center;min-height:min(70vh,640px)}
+.disc{position:absolute;width:min(64vh,100%);aspect-ratio:1;border-radius:50%;background:var(--c,var(--red));transition:background-color .5s var(--ease)}
+.sc-card{position:absolute;opacity:0;transform:translateY(8%) rotate(var(--r,-8deg)) scale(.92);transition:opacity .45s var(--ease),transform .6s var(--ease);--w:clamp(150px,19vw,260px)}
+.sc-card.on{opacity:1;transform:translateY(-6%) rotate(var(--r,-8deg)) scale(1)}
+.sc-card.two{margin-left:calc(var(--w)*.55)}
+@media(max-width:820px){
+  .showcase{display:flex;flex-direction:column;gap:28px;min-height:0;padding-top:72px;padding-bottom:72px}
+  .sc-stage{order:1;width:100%;min-height:min(86vw,420px)}
+  .disc{width:86vw;max-width:420px}
+  .sc-list{order:2;width:100%}
+  .sc-list h2{margin-bottom:8px}
+  .sc-names{display:flex;gap:24px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+  .sc-names::-webkit-scrollbar{display:none}
+  .sc-names button{white-space:nowrap;font-size:1.625rem}
+}
+.sc-names{display:flex;flex-direction:column;gap:clamp(6px,1vw,14px)}
+@media(max-width:820px){.sc-names{flex-direction:row}}
+
+/* ---------- calculator ---------- */
+.calc{min-height:100svh}
+.calc-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);row-gap:48px;align-items:start}
+.calc h2{grid-column:1/span 5;font-size:clamp(3rem,8.4vw,8rem)}
+.board{grid-column:1/span 5;display:flex;gap:clamp(8px,1.2vw,16px);margin-top:clamp(24px,4vw,56px);align-self:end}
+.board .flip{--w:clamp(58px,7.4vw,112px)}
+.panel{grid-column:7/span 6;display:flex;flex-direction:column;gap:28px}
+.row2{display:flex;gap:12px}
+.seg{all:unset;cursor:pointer;flex:1;text-align:center;min-height:56px;display:grid;place-items:center;font:700 1.125rem/1 "Red Hat Text",sans-serif;background:rgba(26,26,26,.14);color:var(--ink);transition:background-color .25s,color .25s,transform .25s var(--ease)}
+.seg:hover{transform:translateY(-2px)}
+.seg[aria-pressed=true]{background:var(--ink);color:var(--bone)}
+.seg:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.field label{display:flex;justify-content:space-between;font-weight:700;font-size:var(--step-lead);margin-bottom:12px}
+.field output{font-family:"Red Hat Display",sans-serif;font-weight:900}
+input[type=range]{width:100%;height:44px;background:transparent;accent-color:var(--ink);cursor:pointer}
+input[type=number]{width:100%;min-height:56px;padding:0 16px;border:0;border-radius:0;background:var(--bone);color:var(--ink);font:700 1.5rem/1 "Red Hat Text",sans-serif}
+.two-in{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:var(--ink);color:var(--bone);padding:20px}
+.stat b{display:block;font:900 clamp(2.25rem,4.4vw,4rem)/1 "Red Hat Display",sans-serif;letter-spacing:-.03em}
+.stat span{font-size:var(--step-small);display:block;margin-top:8px}
+.verdict{background:var(--bone);padding:24px;font:700 clamp(1.25rem,2vw,1.75rem)/1.25 "Red Hat Text",sans-serif;transition:background-color .3s}
+.verdict.go{background:var(--bone)}
+.verdict small{display:block;margin-top:10px;font:400 var(--step-small)/1.45 "Red Hat Text",sans-serif;color:var(--muted)}
+@media(max-width:820px){
+  .calc h2,.board,.panel{grid-column:1/-1}
+  .board{margin-top:0}
+}
+
+/* ---------- pdf preview ---------- */
+.preview{min-height:100svh}
+.preview h2{font-size:clamp(3rem,8.4vw,8rem);max-width:12ch}
+.pages{display:flex;justify-content:center;align-items:center;gap:clamp(12px,2.4vw,36px);margin-top:clamp(40px,6vw,90px);padding:20px 0 60px}
+.pg-wrap{flex:none}
+.pg{width:clamp(240px,27vw,360px);aspect-ratio:1/1.414;background:var(--card);color:var(--ink);padding:clamp(16px,1.8vw,24px);display:flex;flex-direction:column;gap:12px;font-size:var(--step-small);line-height:1.35;transition:transform .5s var(--ease)}
+.pg:hover{transform:translateY(-10px) rotate(0deg)!important}
+.pg h3{font-size:1.25rem;line-height:1}
+.pg .tag{display:inline-block;width:fit-content;background:var(--ink);color:var(--bone);padding:4px 10px;font-weight:700}
+.pg.cover{background:var(--ink);color:var(--bone);justify-content:space-between}
+.pg.cover .big{font-size:clamp(2.25rem,4.2vw,3.5rem);line-height:.9}
+.pg.cover .redblock{background:var(--red);color:#0f0f0f;padding:14px;font-weight:700}
+.pg table{width:100%;border-collapse:collapse;font-size:var(--step-small)}
+.pg th{text-align:left;background:var(--ink);color:var(--bone);padding:6px 8px}
+.pg td{padding:6px 8px}
+.pg tr:nth-child(even) td{background:#e7e0cf}
+.pg td.hi{font-weight:700;color:var(--suit-red)}
+.pg .foot{margin-top:auto;color:var(--muted)}
+.pages .pg-wrap:nth-child(1){--r:-5deg}
+.pages .pg-wrap:nth-child(3){--r:5deg}
+@media(max-width:820px){
+  .pages{justify-content:flex-start;overflow-x:auto;padding:20px var(--m) 40px;margin:48px calc(var(--m)*-1) 0;scrollbar-width:none}
+  .pages::-webkit-scrollbar{display:none}
+  .pg{width:min(78vw,320px)}
+}
+
+/* ---------- faq ---------- */
+.faq-head{background:var(--ink);color:var(--bone);min-height:40svh;display:flex;align-items:flex-end;padding:var(--m)}
+.faq-head h2{font-size:clamp(3rem,8.4vw,8rem)}
+.band{padding:clamp(32px,4vw,56px) var(--m)}
+.band:nth-of-type(odd){background:var(--bg)}
+.band:nth-of-type(even){background:var(--surface)}
+.band .grid{align-items:start;row-gap:16px}
+.band h3{grid-column:1/span 5;font:700 clamp(1.375rem,2.2vw,2rem)/1.15 "Red Hat Text",sans-serif;letter-spacing:-.02em;text-transform:none}
+.band p{grid-column:7/span 6;max-width:52ch}
+@media(max-width:820px){.band h3,.band p{grid-column:1/-1}}
+
+/* ---------- buy ---------- */
+.buy{display:grid;grid-template-columns:5fr 7fr;min-height:90svh}
+.buy>div{position:relative;overflow:hidden;padding:clamp(28px,3.4vw,48px) var(--m);display:flex;flex-direction:column}
+.buy-a{background:var(--red);color:#0f0f0f;gap:24px}
+.buy-a h2{font-size:clamp(3rem,6vw,5.75rem)}
+.buy-a p{font-size:var(--step-lead);line-height:1.35;max-width:26ch}
+.buy-a .incl{font-size:var(--step-body);max-width:34ch;margin-top:auto}
+.buy-b{background:var(--ink);color:var(--bone);justify-content:flex-end;gap:28px}
+.price{font:900 clamp(5rem,13vw,12rem)/.85 "Red Hat Display",sans-serif;letter-spacing:-.05em}
+.price small{font:500 var(--step-lead)/1 "Red Hat Text",sans-serif;letter-spacing:0;margin-left:12px}
+.buy-b .btn{align-self:flex-start;min-height:64px;padding:0 44px;font-size:1.25rem}
+.buy-b .note{font-size:var(--step-small);max-width:52ch;color:#cfc9ba}
+#paynote{font-weight:700;color:var(--yellow);min-height:1.5em}
+.buy-b .decor{position:absolute;right:calc(var(--m) + 10px);top:clamp(28px,4vw,60px);display:flex}
+@media(max-width:820px){
+  .buy{grid-template-columns:1fr}
+  .buy>div{min-height:70svh}
+  .buy-b .btn{align-self:stretch}
+  .buy-b .decor{display:none}
+}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink);color:var(--bone);padding:clamp(36px,5vw,64px) var(--m) 32px}
+footer .word{font:900 clamp(4rem,26vw,28rem)/.85 "Red Hat Display",sans-serif;letter-spacing:-.05em;text-transform:uppercase;margin-bottom:clamp(24px,4vw,48px)}
+footer p{font-size:var(--step-small);max-width:70ch;color:#cfc9ba}
+footer p+p{margin-top:10px}
+
+.float{will-change:transform}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .js [data-reveal]{opacity:1;transform:none}
+  .fan .pcard{transform:translate(var(--x),0) rotate(var(--r))}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="s-h" viewBox="0 0 100 100"><path d="M50 92C10 62 4 36 24 20c14-10 26 2 26 10 0-8 12-20 26-10 20 16 14 42-26 72z"/></symbol>
+  <symbol id="s-d" viewBox="0 0 100 100"><path d="M50 4 90 50 50 96 10 50z"/></symbol>
+  <symbol id="s-s" viewBox="0 0 100 100"><path d="M50 6C96 44 92 72 66 73c-6 0-11-2-14-7 2 12 6 20 14 26H34c8-6 12-14 14-26-3 5-8 7-14 7C8 72 4 44 50 6z"/></symbol>
+  <symbol id="s-c" viewBox="0 0 100 100"><circle cx="50" cy="29" r="21"/><circle cx="27" cy="60" r="21"/><circle cx="73" cy="60" r="21"/><path d="M50 50l9 44H41z"/></symbol>
+</svg>
+
+<!-- ============ HERO ============ -->
+<header class="chapter f-ink hero">
+  <div class="bar">
+    <a class="mark" href="#">Rigel</a>
+    <nav>
+      <a href="#contenido">Contenido</a>
+      <a href="#probalo">Probalo</a>
+      <a href="#preview">Vista previa</a>
+      <a class="btn small" href="#comprar">Comprar</a>
+    </nav>
+  </div>
+
+  <h1><span class="line"><span>Decidí con</span></span><span class="line"><span>números</span></span></h1>
+
+  <div class="hero-row">
+    <div class="hero-copy">
+      <p>Tablas de probabilidades para jugar cash games online sin adivinar: pagás, subís o foldeás con el porcentaje en la mano.</p>
+      <a class="btn" href="#comprar">Quiero el PDF</a>
+    </div>
+    <div class="fan" aria-hidden="true">
+      <div class="float" data-speed=".06">
+        <div class="pcard" data-card="A s" style="--i:0;--x:calc(-2 * var(--w) * .8);--r:-24deg"></div>
+        <div class="pcard" data-card="K h" style="--i:1;--x:calc(-1 * var(--w) * .8);--r:-12deg"></div>
+        <div class="pcard" data-card="Q d" style="--i:2;--x:calc(0 * var(--w) * .8);--r:0deg"></div>
+        <div class="pcard" data-card="J c" style="--i:3;--x:calc(1 * var(--w) * .8);--r:12deg"></div>
+        <div class="pcard" data-card="10 s" style="--i:4;--x:calc(2 * var(--w) * .8);--r:24deg"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============ ESCENA: LA CARTA ============ -->
+<section class="deal" id="mano" aria-label="Una mano, un número">
+  <div class="deal-stage">
+    <div class="deal-copy">
+      <h2>Una mano,<br>un número</h2>
+      <p>Cada decisión tiene un porcentaje detrás. El PDF te lo deja a mano.</p>
+    </div>
+    <div class="deal-card" aria-hidden="true">
+      <div class="spin" id="spin">
+        <div class="pcard" data-card="A s"></div>
+        <div class="pcard back"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUÉ TRAE ============ -->
+<section class="chapter f-bone showcase" id="contenido">
+  <div class="sc-list" data-reveal>
+    <h2>Qué trae</h2>
+    <div class="sc-names" role="tablist" aria-label="Contenido del PDF">
+      <button role="tab" aria-selected="true" data-i="0">Outs y equity</button>
+      <button role="tab" aria-selected="false" data-i="1">Pot odds</button>
+      <button role="tab" aria-selected="false" data-i="2">Manos iniciales</button>
+      <button role="tab" aria-selected="false" data-i="3">Posición</button>
+    </div>
+    <p class="sc-fact" id="fact" aria-live="polite">Cuántas cartas te salvan y qué porcentaje de completar la mano significan, del flop al river.</p>
+  </div>
+  <div class="sc-stage" aria-hidden="true">
+    <div class="disc" id="disc"></div>
+    <div class="sc-card on" data-card="9 h" style="--r:-8deg"></div>
+    <div class="sc-card" data-card="Q d" style="--r:6deg"></div>
+    <div class="sc-card" data-card="A s" style="--r:-6deg"></div>
+    <div class="sc-card" data-card="K c" style="--r:8deg"></div>
+  </div>
+</section>
+
+<!-- ============ PROBALO ============ -->
+<section class="chapter f-green calc" id="probalo">
+  <div class="calc-grid">
+    <h2 data-reveal>Probalo<br>ahora</h2>
+    <div class="panel" data-reveal style="--d:2">
+      <div class="row2" role="group" aria-label="Calle">
+        <button class="seg" id="st-flop" aria-pressed="true">Estoy en el flop</button>
+        <button class="seg" id="st-turn" aria-pressed="false">Estoy en el turn</button>
+      </div>
+      <div class="field">
+        <label for="outs">Tus outs <output id="outsv">9</output></label>
+        <input type="range" id="outs" min="1" max="20" value="9">
+      </div>
+      <div class="two-in">
+        <div class="field"><label for="pot">Pot</label><input type="number" id="pot" value="100" min="1" inputmode="decimal"></div>
+        <div class="field"><label for="bet">Apuesta</label><input type="number" id="bet" value="50" min="1" inputmode="decimal"></div>
+      </div>
+      <div class="result">
+        <div class="stat"><b id="eq">35.0%</b><span id="eqlbl">de completar hasta el river</span></div>
+        <div class="stat"><b id="need">25.0%</b><span>que necesitás para que pagar sea rentable</span></div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+    <div class="board" aria-hidden="true">
+      <div class="float" data-speed="-.04" style="display:flex;gap:inherit">
+        <div class="flip up" data-card="A h" data-face></div>
+        <div class="flip up" data-card="7 s" data-face></div>
+        <div class="flip up" data-card="2 d" data-face></div>
+        <div class="flip" id="turnc" data-card="9 c" data-face></div>
+        <div class="flip" id="riverc" data-card="4 h" data-face></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VISTA PREVIA ============ -->
+<section class="chapter f-yellow preview" id="preview">
+  <h2 data-reveal>Así se ve<br>por dentro</h2>
+  <div class="pages">
+    <div class="pg-wrap float" data-speed=".05" data-rot="-5">
+      <div class="pg cover" data-ui>
+        <span class="tag">Texas Hold'em · Cash online</span>
+        <div class="display big">Tablas<br>de poker</div>
+        <div class="redblock">Outs, pot odds y manos iniciales para decidir en segundos.</div>
+      </div>
+    </div>
+    <div class="pg-wrap float" data-speed="-.03" data-rot="0">
+      <div class="pg" data-ui>
+        <h3>Outs y equity</h3>
+        <p>Chance de completar la mano según tus outs.</p>
+        <table>
+          <thead><tr><th>Proyecto</th><th>Outs</th><th>Flop</th><th>Turn</th></tr></thead>
+          <tbody>
+            <tr><td>Gutshot</td><td>4</td><td class="hi">16.5%</td><td>8.7%</td></tr>
+            <tr><td>Dos overcards</td><td>6</td><td class="hi">24.1%</td><td>13.0%</td></tr>
+            <tr><td>Escalera abierta</td><td>8</td><td class="hi">31.5%</td><td>17.4%</td></tr>
+            <tr><td>Color</td><td>9</td><td class="hi">35.0%</td><td>19.6%</td></tr>
+            <tr><td>Color + gutshot</td><td>12</td><td class="hi">45.0%</td><td>26.1%</td></tr>
+            <tr><td>Color + escalera</td><td>15</td><td class="hi">54.1%</td><td>32.6%</td></tr>
+          </tbody>
+        </table>
+        <p class="foot">Flop: dos cartas por venir. Turn: una.</p>
+      </div>
+    </div>
+    <div class="pg-wrap float" data-speed=".05" data-rot="5">
+      <div class="pg" data-ui>
+        <h3>Pot odds</h3>
+        <p>Equity mínima para pagar según la apuesta.</p>
+        <table>
+          <thead><tr><th>Apuesta</th><th>Necesitás</th></tr></thead>
+          <tbody>
+            <tr><td>1/4 del pot</td><td class="hi">20.0%</td></tr>
+            <tr><td>1/3 del pot</td><td class="hi">25.0%</td></tr>
+            <tr><td>1/2 del pot</td><td class="hi">33.3%</td></tr>
+            <tr><td>2/3 del pot</td><td class="hi">40.0%</td></tr>
+            <tr><td>3/4 del pot</td><td class="hi">42.9%</td></tr>
+            <tr><td>Pot</td><td class="hi">50.0%</td></tr>
+          </tbody>
+        </table>
+        <p class="foot">Si tu chance supera el porcentaje, pagar es rentable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PREGUNTAS ============ -->
+<section id="preguntas">
+  <div class="faq-head"><h2 data-reveal>Preguntas</h2></div>
+  <div class="band"><div class="grid">
+    <h3 data-reveal>¿Para qué tipo de juego sirve?</h3>
+    <p data-reveal style="--d:1">Para Texas Hold'em en cash games online. Las tablas de outs y pot odds sirven en cualquier mesa; las de manos iniciales y posición están pensadas para ese formato.</p>
+  </div></div>
+  <div class="band"><div class="grid">
+    <h3 data-reveal>¿Me garantiza ganar plata?</h3>
+    <p data-reveal style="--d:1">No. Te ayuda a decidir mejor, y a largo plazo eso se nota en los resultados. En el corto plazo la varianza y el rake pueden jugar en contra, y ninguna tabla lo cambia.</p>
+  </div></div>
+  <div class="band"><div class="grid">
+    <h3 data-reveal>¿Sirve si no soy profesional?</h3>
+    <p data-reveal style="--d:1">Está hecho justo para eso: para quien ya conoce las reglas y juega seguido, pero hoy decide a ojo. Todo está en tablas de consulta rápida, sin teoría larga.</p>
+  </div></div>
+  <div class="band"><div class="grid">
+    <h3 data-reveal>¿Cómo lo recibo?</h3>
+    <p data-reveal style="--d:1">Es un PDF de descarga inmediata después del pago. Lo abrís en una ventana al lado de la mesa o en el celular.</p>
+  </div></div>
+</section>
+
+<!-- ============ COMPRAR ============ -->
+<section class="buy" id="comprar">
+  <div class="buy-a">
+    <h2 data-reveal>El PDF</h2>
+    <p data-reveal style="--d:1">Para decidir con el porcentaje en la mano.</p>
+    <p class="incl" data-reveal style="--d:2">Incluye tablas de outs y equity, pot odds, manos iniciales y rangos por posición, en un formato pensado para consultar mientras jugás.</p>
+  </div>
+  <div class="buy-b">
+    <div class="decor float" data-speed=".05" aria-hidden="true">
+      <div class="pcard" data-card="A s" style="--w:clamp(90px,9vw,130px);transform:rotate(-10deg)"></div>
+      <div class="pcard" data-card="A h" style="--w:clamp(90px,9vw,130px);transform:rotate(8deg);margin-left:-30px"></div>
+    </div>
+    <div class="price" data-reveal>USD 9<small>pago único</small></div>
+    <a class="btn" id="buy" href="#comprar" data-reveal style="--d:1">Comprar ahora</a>
+    <p id="paynote" aria-live="polite"></p>
+    <p class="note" data-reveal style="--d:2">Descarga inmediata. Solo para mayores de 18 años.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="word" aria-hidden="true">Rigel</div>
+  <p>Este material es educativo. Mejora la toma de decisiones, pero no garantiza ganancias: el poker implica riesgo de perder dinero. Jugá con responsabilidad y solo con plata que puedas perder.</p>
+  <p>Las tablas de probabilidades asumen un mazo de 52 cartas y no incluyen implied odds ni fold equity.</p>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SUITS = {h:['s-h',1], d:['s-d',1], s:['s-s',0], c:['s-c',0]};
+
+  function cardHTML(rank, suit){
+    var s = SUITS[suit], use = '<svg viewBox="0 0 100 100"><use href="#'+s[0]+'"/></svg>';
+    var corner = '<span class="c %"><span>'+rank+'</span>'+use+'</span>';
+    return '<span class="c tl"><span>'+rank+'</span>'+use+'</span>' +
+           '<svg class="pip" viewBox="0 0 100 100"><use href="#'+s[0]+'"/></svg>' +
+           '<span class="c br"><span>'+rank+'</span>'+use+'</span>';
+  }
+  function fillCard(el){
+    var p = el.dataset.card.split(' '), s = SUITS[p[1]];
+    el.classList.add('pcard'); if(s[1]) el.classList.add('r');
+    el.innerHTML = cardHTML(p[0], p[1]);
+  }
+  document.querySelectorAll('[data-card]').forEach(function(el){
+    if(el.hasAttribute('data-face')){
+      var p = el.dataset.card.split(' ');
+      el.innerHTML = '<div class="in3d"><div class="pcard back"></div><div class="pcard face '+(SUITS[p[1]][1]?'r':'')+'">'+cardHTML(p[0],p[1])+'</div></div>';
+    } else fillCard(el);
+  });
+
+  /* reveal on enter, staggered by --d */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.15});
+  document.querySelectorAll('[data-reveal]').forEach(function(el){ io.observe(el); });
+
+  /* parallax floats */
+  var floats = [].slice.call(document.querySelectorAll('.float[data-speed]'));
+  var deal = document.getElementById('mano'), spin = document.getElementById('spin');
+  function ease(t){ return t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function dealTick(){
+    var r = deal.getBoundingClientRect(), span = r.height - innerHeight;
+    var p = Math.max(0, Math.min(1, -r.top / span));
+    var a = Math.min(1, p/.5), b = Math.max(0, (p-.5)/.5);
+    var scale, rot, y;
+    if(p <= .5){ var e = ease(a); scale = .12 + .88*e; rot = 360*e; y = 0; }
+    else { var f = ease(b); scale = 1 - .88*f; rot = 360 + 120*f; y = -30*f; }
+    spin.style.transform = 'translate3d(0,'+y.toFixed(1)+'vh,0) scale('+scale.toFixed(3)+') rotateY('+rot.toFixed(1)+'deg)';
+  }
+  function tick(){
+    dealTick();
+    var h = innerHeight;
+    floats.forEach(function(el){
+      var host = el.parentElement.getBoundingClientRect();
+      if(host.bottom < -200 || host.top > h + 200) return;
+      var off = host.top + host.height/2 - h/2;
+      var y = -off * parseFloat(el.dataset.speed);
+      var r = parseFloat(el.dataset.rot||0) * (1 - Math.min(1, Math.abs(off)/ (h*1.2)) * .6);
+      el.style.setProperty('--r', r+'deg');
+      el.style.transform = 'translate3d(0,'+y.toFixed(1)+'px,0)' + (el.dataset.rot ? ' rotate('+r.toFixed(2)+'deg)' : '');
+    });
+  }
+  if(!reduce){
+    var ticking = false;
+    addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(function(){ tick(); ticking = false; }); } }, {passive:true});
+    addEventListener('resize', tick); tick();
+  }
+
+  /* showcase tabs */
+  var facts = [
+    'Cuántas cartas te salvan y qué porcentaje de completar la mano significan, del flop al river.',
+    'Qué porcentaje necesitás para que pagar sea rentable, según el tamaño de la apuesta.',
+    'Cómo rinde cada mano de salida y cuándo conviene entrar al pot.',
+    'Qué manos abrir desde cada asiento de la mesa: temprano, medio, botón y ciegas.'
+  ];
+  var colors = ['var(--red)','var(--yellow)','var(--accent)','var(--ink)'];
+  var tabs = [].slice.call(document.querySelectorAll('.sc-names button'));
+  var cards = [].slice.call(document.querySelectorAll('.sc-card'));
+  var disc = document.getElementById('disc'), fact = document.getElementById('fact');
+  function pick(i){
+    tabs.forEach(function(t,k){ t.setAttribute('aria-selected', k===i); });
+    cards.forEach(function(c,k){ c.classList.toggle('on', k===i); });
+    disc.style.setProperty('--c', colors[i]); fact.textContent = facts[i];
+  }
+  disc.style.setProperty('--c', colors[0]);
+  tabs.forEach(function(t,i){ t.addEventListener('click', function(){ pick(i); }); });
+  var auto = setInterval(function(){
+    var cur = tabs.findIndex(function(t){ return t.getAttribute('aria-selected')==='true'; });
+    if(!reduce) pick((cur+1)%4);
+  }, 4200);
+  document.querySelector('.sc-names').addEventListener('click', function(){ clearInterval(auto); });
+
+  /* calculator (exact hypergeometric, 52-card deck) */
+  function C2(n){ return n*(n-1)/2; }
+  var street = 'flop';
+  var $ = function(id){ return document.getElementById(id); };
+  function calc(){
+    var outs = +$('outs').value, pot = Math.max(0, +$('pot').value||0), bet = Math.max(0, +$('bet').value||0);
+    $('outsv').textContent = outs;
+    var eq = street==='flop' ? 1 - C2(47-outs)/C2(47) : outs/46;
+    var need = (pot+bet) > 0 ? bet/(pot+bet) : 0;
+    $('eq').textContent = (eq*100).toFixed(1)+'%';
+    $('need').textContent = (need*100).toFixed(1)+'%';
+    $('eqlbl').textContent = street==='flop' ? 'de completar hasta el river' : 'de completar en el river';
+    var ok = eq >= need, v = $('verdict');
+    v.innerHTML = (ok ? 'Pagar es rentable: tenés '+(eq*100).toFixed(1)+'% y necesitás '+(need*100).toFixed(1)+'%.'
+                      : 'Con estos números, foldear: tenés '+(eq*100).toFixed(1)+'% y necesitás '+(need*100).toFixed(1)+'%.')
+      + '<small>Cálculo puro de equity contra pot odds. No incluye implied odds ni la chance de que el rival foldee.</small>';
+  }
+  function setStreet(s){
+    street = s;
+    $('st-flop').setAttribute('aria-pressed', s==='flop'); $('st-turn').setAttribute('aria-pressed', s==='turn');
+    $('turnc').classList.toggle('up', s==='turn');
+    calc();
+  }
+  $('st-flop').onclick = function(){ setStreet('flop'); };
+  $('st-turn').onclick = function(){ setStreet('turn'); };
+  ['outs','pot','bet'].forEach(function(id){ $(id).addEventListener('input', calc); });
+  calc();
+
+  /* purchase: wire a real payment link here (Mercado Pago, Gumroad, etc.) */
+  var PAY_URL = '';
+  var buy = $('buy');
+  if(PAY_URL){ buy.href = PAY_URL; }
+  else buy.addEventListener('click', function(e){ e.preventDefault(); $('paynote').textContent = 'Todavía no hay un link de pago conectado.'; });
+})();
+</script>
+</body>
+</html>
