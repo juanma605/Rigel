@@ -1,0 +1,6 @@
+.superpowers/
+.taste-skill/
+.claude/
+*.log
+.env
+.env.*
