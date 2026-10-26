@@ -99,10 +99,10 @@ svg{display:block}
 
 
 /* ---------- deal scene (scroll-driven card) ---------- */
-.deal{height:320svh;position:relative;background:var(--felt);color:var(--bone)}
+.deal{height:380svh;position:relative;background:var(--felt);color:var(--bone)}
 .deal-stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(12px,2vw,28px);align-items:center;padding:0 var(--m);perspective:1400px}
 .deal-copy{grid-column:1/span 5;display:flex;flex-direction:column;gap:24px}
-.deal-copy h2{font-size:clamp(2.75rem,6.4vw,6.5rem)}
+.deal-copy h2{font-size:clamp(2.5rem,5.2vw,5.5rem)}
 .deal-copy p{font-size:var(--step-lead);line-height:1.35;max-width:26ch}
 .deal-card{grid-column:7/span 6;display:grid;place-items:center;height:100svh}
 .spin{position:relative;height:min(64svh,78vw*1.4);aspect-ratio:5/7;transform-style:preserve-3d;will-change:transform}
@@ -576,15 +576,22 @@ footer p+p{margin-top:10px}
   /* parallax floats */
   var floats = [].slice.call(document.querySelectorAll('.float[data-speed]'));
   var deal = document.getElementById('mano'), spin = document.getElementById('spin');
-  function ease(t){ return t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function ease(t){ return t*t*(3-2*t); }
+  var dealCell = document.querySelector('.deal-card'), dealCopy = document.querySelector('.deal-copy');
   function dealTick(){
     var r = deal.getBoundingClientRect(), span = r.height - innerHeight;
     var p = Math.max(0, Math.min(1, -r.top / span));
-    var a = Math.min(1, p/.5), b = Math.max(0, (p-.5)/.5);
-    var scale, rot, y;
-    if(p <= .5){ var e = ease(a); scale = .12 + .88*e; rot = 360*e; y = 0; }
-    else { var f = ease(b); scale = 1 - .88*f; rot = 360 + 120*f; y = -30*f; }
-    spin.style.transform = 'translate3d(0,'+y.toFixed(1)+'vh,0) scale('+scale.toFixed(3)+') rotateY('+rot.toFixed(1)+'deg)';
+    var baseH = spin.offsetHeight, baseW = baseH*5/7;
+    var max = Math.min(innerHeight*.94/baseH, innerWidth*.94/baseW);
+    var c = dealCell.getBoundingClientRect();
+    var dxMax = innerWidth/2 - (c.left + c.width/2), dyMax = innerHeight/2 - (c.top + c.height/2);
+    var min = .12, k, scale, rot, lift = 0;
+    if(p < .5){ k = ease(p/.5); scale = min + (max-min)*k; rot = 360*k; }
+    else if(p <= .58){ k = 1; scale = max; rot = 360; }
+    else { var f = ease((p-.58)/.42); k = 1 - f; scale = min + (max-min)*k; rot = 360 + 120*f; lift = -.3*innerHeight*f*(1-k*0); }
+    var t = Math.max(0, Math.min(1, (scale/max - .5)/.35));
+    dealCopy.style.opacity = (1 - t).toFixed(2);
+    spin.style.transform = 'translate3d('+(dxMax*k).toFixed(1)+'px,'+(dyMax*k + lift).toFixed(1)+'px,0) scale('+scale.toFixed(3)+') rotateY('+rot.toFixed(1)+'deg)';
   }
   function tick(){
     dealTick();
