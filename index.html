@@ -531,6 +531,10 @@ footer p+p{margin-top:10px}
         <input type="checkbox" id="bump">
         <div><b>Sumá la planilla de seguimiento por $5.000 más</b><span>Anotá tus sesiones y descubrí qué manos te hacen ganar y cuáles perder.</span></div>
       </label>
+      <label class="bump">
+        <input type="checkbox" id="bump2">
+        <div><b>Sumá la guía «Cómo jugar» por $7.000 más</b><span>Lo básico del juego para abrir las tablas y entender cada estrategia: apuestas, botes laterales y cómo leer las matrices.</span></div>
+      </label>
       <a class="btn" id="buy" href="#comprar">Quiero el paquete completo</a>
       <p id="paynote" aria-live="polite"></p>
       <p class="note">Te lo enviamos apenas confirmamos el pago. Solo para mayores de 18 años.</p>
@@ -709,20 +713,29 @@ footer p+p{margin-top:10px}
 
   /* compra: poné acá el usuario de Instagram (sin @) para recibir los pedidos por mensaje directo */
   var IG_USER = 'poker.exacto';
-  var buy = $('buy'), bump = $('bump');
+  var buy = $('buy'), bump = $('bump'), bump2 = $('bump2');
   function money(n){ return '$'+n.toLocaleString('es-AR'); }
+  function extras(){
+    var e = [];
+    if(bump.checked) e.push({n:'planilla de seguimiento', p:5000});
+    if(bump2.checked) e.push({n:'guía Cómo jugar', p:7000});
+    return e;
+  }
   function total(){
-    var t = 25000 + (bump.checked ? 5000 : 0);
+    var e = extras(), t = 25000;
+    e.forEach(function(x){ t += x.p; });
     $('price').textContent = money(t);
-    $('totalline').textContent = bump.checked ? 'Paquete completo $25.000 + planilla $5.000' : 'Paquete completo, pago único';
+    $('totalline').textContent = e.length
+      ? 'Paquete completo $25.000' + e.map(function(x){ return ' + ' + x.n + ' ' + money(x.p); }).join('')
+      : 'Paquete completo, pago único';
     buy.href = IG_USER ? 'https://ig.me/m/' + IG_USER : '#comprar';
   }
   function pedido(){
-    return bump.checked
-      ? 'Hola! Quiero el paquete completo con la planilla de seguimiento ($30.000).'
-      : 'Hola! Quiero el paquete completo ($25.000).';
+    var e = extras(), t = 25000;
+    e.forEach(function(x){ t += x.p; });
+    return 'Hola! Quiero el paquete completo' + (e.length ? ' con ' + e.map(function(x){ return 'la ' + x.n; }).join(' y ') : '') + ' (' + money(t) + ').';
   }
-  bump.addEventListener('change', total); total();
+  bump.addEventListener('change', total); bump2.addEventListener('change', total); total();
   buy.addEventListener('click', function(e){
     if(!IG_USER){
       e.preventDefault(); $('paynote').textContent = 'Todavía no hay una cuenta de Instagram conectada.';
